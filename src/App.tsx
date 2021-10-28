@@ -5,6 +5,8 @@ import Login from './features/login/Login'
 import { init, selectLogin } from './features/login/loginSlice'
 import Offers from './features/offer/Offers'
 import Control from './features/Control'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import User from './features/user/User'
 
 function App() {
   const login = useAppSelector(selectLogin)
@@ -18,10 +20,17 @@ function App() {
         {login.status === 'pending' ? (
           <i>Loading</i>
         ) : login.isLoggedIn ? (
-          <>
+          <Router>
             <Control />
-            <Offers />
-          </>
+            <Switch>
+              <Route path="/user/:webId">
+                <User />
+              </Route>
+              <Route path="/">
+                <Offers />
+              </Route>
+            </Switch>
+          </Router>
         ) : (
           <Login />
         )}
