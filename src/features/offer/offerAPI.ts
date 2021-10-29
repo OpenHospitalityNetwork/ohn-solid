@@ -8,8 +8,19 @@ export const fetchOffers = async (): Promise<Offer[]> => {
       offers.push({
         id: `${i}_${j}`,
         position: [(Math.random() - 0.5) * 160, (Math.random() - 0.5) * 360],
+        userId: '',
       })
     }
   }
   return offers
+}
+
+export const getOffersOfUser = async (webId: string): Promise<Offer[]> => {
+  return [
+    {
+      id: '',
+      position: [0, 0],
+      userId: webId,
+    },
+  ]
 }

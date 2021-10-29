@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../app/store'
+import { getUser } from '../user/userSlice'
 import * as api from './loginAPI'
 
 export interface LoginState {
@@ -16,7 +17,13 @@ const initialState: LoginState = {
 
 export const login = createAsyncThunk('login/login', api.login)
 
-export const init = createAsyncThunk('login/init', api.init)
+export const init = createAsyncThunk('login/init', async (_, { dispatch }) => {
+  const data = await api.init()
+  if (data?.isLoggedIn && data?.webId) {
+    dispatch(getUser(data.webId))
+  }
+  return data
+})
 
 export const logout = createAsyncThunk('login/logout', api.logout)
 

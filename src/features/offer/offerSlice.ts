@@ -19,6 +19,13 @@ export const loadOffers = createAsyncThunk('offer/fetchOffers', async () => {
   return response
 })
 
+export const getOffersOfUser = createAsyncThunk(
+  'offer/getOffersOfUser',
+  async (webId: string) => {
+    return await api.getOffersOfUser(webId)
+  },
+)
+
 export const offerSlice = createSlice({
   name: 'offer',
   initialState,
