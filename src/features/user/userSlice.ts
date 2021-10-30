@@ -3,6 +3,7 @@ import { RootState } from '../../app/store'
 import * as api from './userAPI'
 import { User } from './types'
 import { getOffersOfUser } from '../offer/offerSlice'
+import { getCommunitiesOfUser } from '../community/communitySlice'
 
 export interface UserState {
   byId: { [id: string]: User }
@@ -19,6 +20,7 @@ export const getUser = createAsyncThunk(
   async (webId: string, { dispatch }) => {
     const response = await api.getUser(webId)
     dispatch(getOffersOfUser(webId))
+    dispatch(getCommunitiesOfUser(webId))
     return response
   },
 )
@@ -28,13 +30,21 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(getUser.fulfilled, (state, action) => {
-      const user = action.payload
-      state.byId[user.id] = user
-      if (!state.allIds.includes(user.id)) {
-        state.allIds.push(user.id)
-      }
-    })
+    builder
+      .addCase(getUser.fulfilled, (state, action) => {
+        const user = action.payload
+        if (user) {
+          state.byId[user.id] = user
+          if (!state.allIds.includes(user.id)) {
+            state.allIds.push(user.id)
+          }
+        }
+      })
+      .addCase(getCommunitiesOfUser.fulfilled, (state, action) => {
+        const { userId, communities } = action.payload
+
+        state.byId[userId].communityIds = communities
+      })
   },
 })
 

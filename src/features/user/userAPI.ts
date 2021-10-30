@@ -9,33 +9,26 @@ import {
 import { fetch } from '@inrupt/solid-client-authn-browser'
 import { vcard, foaf } from 'rdf-namespaces'
 
-export const getUser = async (webId: string): Promise<User> => {
+export const getUser = async (webId: string): Promise<User | null> => {
   const dataset = await getSolidDataset(webId, { fetch })
 
   const user = getThing(dataset, webId)
-  if (user) {
-    const name =
-      (getStringNoLocale(user, vcard.fn) ||
-        getStringNoLocale(user, foaf.name)) ??
-      ''
-    const avatarUrl = getUrl(user, vcard.hasPhoto) ?? ''
-    const avatar = avatarUrl ? await displayProtectedImage(avatarUrl) : ''
-    const about =
-      (getStringNoLocale(user, vcard.note) ||
-        getStringWithLocale(user, vcard.note, 'en')) ??
-      ''
-    return {
-      id: webId,
-      name,
-      avatar,
-      about,
-    }
-  }
+  if (!user) return null
+  const name =
+    (getStringNoLocale(user, vcard.fn) || getStringNoLocale(user, foaf.name)) ??
+    ''
+  const avatarUrl = getUrl(user, vcard.hasPhoto) ?? ''
+  const avatar = avatarUrl ? await displayProtectedImage(avatarUrl) : ''
+  const about =
+    (getStringNoLocale(user, vcard.note) ||
+      getStringWithLocale(user, vcard.note, 'en')) ??
+    ''
   return {
     id: webId,
-    name: '',
-    avatar: '',
-    about: '',
+    name,
+    avatar,
+    about,
+    communityIds: [],
   }
 }
 
