@@ -31,12 +31,23 @@ export const offerSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(loadOffers.fulfilled, (state, action) => {
-      action.payload.forEach(offer => {
-        state.byId[offer.id] = offer
-        state.allIds.push(offer.id)
+    builder
+      .addCase(loadOffers.fulfilled, (state, action) => {
+        action.payload.forEach(offer => {
+          state.byId[offer.id] = offer
+          if (!state.allIds.includes(offer.id)) {
+            state.allIds.push(offer.id)
+          }
+        })
       })
-    })
+      .addCase(getOffersOfUser.fulfilled, (state, action) => {
+        action.payload.forEach(offer => {
+          state.byId[offer.id] = offer
+          if (!state.allIds.includes(offer.id)) {
+            state.allIds.push(offer.id)
+          }
+        })
+      })
   },
 })
 

@@ -50,3 +50,12 @@ export const selectUser = createSelector(
   (webId, users) =>
     users[webId] ?? { id: webId, name: '', avatar: '', about: '' },
 )
+
+const selectOffers = (state: RootState) => state.offer.byId
+
+export const selectUserOffers = createSelector(
+  selectUserId,
+  selectOffers,
+  (userId, offers) =>
+    Object.values(offers).filter(offer => offer.userId === userId),
+)

@@ -7,7 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 const Map: FC<{ points: Offer[] }> = ({ points }) => {
-  const position: LatLngTuple = [54, 23]
+  const position: LatLngTuple = [50, 15]
 
   return (
     <MapContainer
@@ -20,9 +20,19 @@ const Map: FC<{ points: Offer[] }> = ({ points }) => {
         url="https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"
       />
       <MarkerClusterGroup>
-        {points.map(({ id, position }) => (
-          <Marker key={JSON.stringify(position)} position={position}>
-            <Popup>There will be a basic user {id} info here, or not.</Popup>
+        {points.map(offer => (
+          <Marker key={offer.id} position={offer.position}>
+            <Popup>
+              <p>{offer.id}</p>
+              <p>{offer.userId}</p>
+              <p>
+                {Object.entries(offer.about).map(([lang, texts]) => (
+                  <li key={lang}>
+                    <b>{lang}</b> <span>{texts.join('----')}</span>
+                  </li>
+                ))}
+              </p>
+            </Popup>
           </Marker>
         ))}
       </MarkerClusterGroup>
