@@ -29,8 +29,14 @@ export const getOffersOfUser = createAsyncThunk(
 export const createOffer = createAsyncThunk(
   'offer/create',
   async ({ offer, document }: { offer: Offer; document: string }) => {
-    await api.createOffer(offer, document)
-    return offer
+    return await api.createOffer(offer, document)
+  },
+)
+
+export const updateOffer = createAsyncThunk(
+  'offer/update',
+  async ({ offer, document }: { offer: Offer; document: string }) => {
+    return await api.updateOffer(offer, document)
   },
 )
 
@@ -52,6 +58,10 @@ export const offerSlice = createSlice({
         const offer = action.payload
         state.byId[offer.id] = offer
         state.allIds.push(offer.id)
+      })
+      .addCase(updateOffer.fulfilled, (state, action) => {
+        const offer = action.payload
+        state.byId[offer.id] = offer
       })
   },
 })

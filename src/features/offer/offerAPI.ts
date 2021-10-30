@@ -12,6 +12,7 @@ import {
   getUrl,
   saveSolidDatasetAt,
   setThing,
+  ThingPersisted,
 } from '@inrupt/solid-client'
 import { rdf, rdfs } from 'rdf-namespaces'
 import { LatLngTuple } from 'leaflet'
@@ -48,7 +49,7 @@ export const getOffersOfUser = async (webId: string): Promise<Offer[]> => {
       const lat = location && getDecimal(location, wgs84('lat'))
       const long = location && getDecimal(location, wgs84('long'))
 
-      if (!(lat && long)) return null
+      if (lat === null || long === null) return null
 
       const about = getStringByLocaleAll(thing, rdfs.comment)
 
@@ -101,4 +102,31 @@ export const createOffer = async (offer: Offer, document: string) => {
   await saveSolidDatasetAt(document, newDataset, { fetch })
 
   return offer
+}
+
+export const updateOffer = async (offer: Offer, document: string) => {
+  const dataset = await getSolidDataset(document, { fetch })
+  const offerThing = getThing(dataset, offer.id) as ThingPersisted
+
+  if (offerThing) {
+    const locationUri = getUrl(offerThing, wgs84('location')) ?? ''
+
+    const locationThing = getThing(dataset, locationUri)
+
+    if (locationThing) {
+      const offerThingBuilder = buildThing(offerThing).setStringEnglish(
+        rdfs.comment,
+        offer.about.en[0],
+      )
+      const locationThingBuilder = buildThing(locationThing)
+        .setDecimal(wgs84('lat'), offer.position[0])
+        .setDecimal(wgs84('long'), offer.position[1])
+      let newDataset = setThing(dataset, offerThingBuilder.build())
+      newDataset = setThing(newDataset, locationThingBuilder.build())
+      await saveSolidDatasetAt(document, newDataset, { fetch })
+      return offer
+    }
+    throw new Error('location to update not found')
+  }
+  throw new Error('offer to update not found')
 }

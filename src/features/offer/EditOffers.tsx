@@ -1,10 +1,9 @@
-import { FormEventHandler } from 'hoist-non-react-statics/node_modules/@types/react'
-import React, { useState } from 'react'
+import React, { useState, useEffect, FormEventHandler } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { selectLogin } from '../login/loginSlice'
 import { selectUserOffers } from '../user/userSlice'
 import { getHospexUri } from './offerAPI'
-import { createOffer } from './offerSlice'
+import { createOffer, updateOffer } from './offerSlice'
 import { Offer } from './types'
 
 const EditOffers = () => {
@@ -14,9 +13,19 @@ const EditOffers = () => {
   const document = getHospexUri(userId)
 
   const [create, setCreate] = useState(false)
+  const [edit, setEdit] = useState('')
+
+  const offerToEdit = offers.find(offer => offer.id === edit)
 
   const handleClickAdd = () => {
     setCreate(true)
+    setEdit('')
+  }
+
+  const handleClickEdit = (id: string) => {
+    setEdit('')
+    setCreate(false)
+    setEdit(id)
   }
 
   const handleCreate = (offer: Offer) => {
@@ -24,9 +33,42 @@ const EditOffers = () => {
     setCreate(false)
   }
 
+  const handleUpdate = (offer: Offer) => {
+    dispatch(updateOffer({ offer, document }))
+    setEdit('')
+  }
+
   const handleCancel = () => {
     setCreate(false)
+    setEdit('')
   }
+
+  if (create)
+    return (
+      <EditOfferForm
+        offer={{
+          id: `${document}#offer${Date.now()}`,
+          userId,
+          position: [0, 0],
+          about: {
+            en: [''],
+          },
+        }}
+        onSubmit={handleCreate}
+        onCancel={handleCancel}
+        submit="Create"
+      />
+    )
+
+  if (offerToEdit)
+    return (
+      <EditOfferForm
+        offer={offerToEdit}
+        onSubmit={handleUpdate}
+        onCancel={handleCancel}
+        submit="Update"
+      />
+    )
 
   return (
     <div>
@@ -35,24 +77,11 @@ const EditOffers = () => {
       <ul>
         {offers.map(offer => (
           <li key={offer.id}>
-            {JSON.stringify(offer)} <button>edit</button>
+            {JSON.stringify(offer)}{' '}
+            <button onClick={() => handleClickEdit(offer.id)}>edit</button>
           </li>
         ))}
       </ul>
-      {create && (
-        <EditOfferForm
-          offer={{
-            id: `${document}#offer${Date.now()}`,
-            userId,
-            position: [0, 0],
-            about: {
-              en: [''],
-            },
-          }}
-          onSubmit={handleCreate}
-          onCancel={handleCancel}
-        />
-      )}
     </div>
   )
 }
@@ -61,12 +90,18 @@ const EditOfferForm = ({
   offer,
   onSubmit,
   onCancel,
+  submit,
 }: {
   offer: Offer
   onSubmit: (offer: Offer) => void
   onCancel: () => void
+  submit: 'Create' | 'Update'
 }) => {
   const [editedOffer, setEditedOffer] = useState(offer)
+
+  useEffect(() => {
+    setEditedOffer(offer)
+  }, [offer])
 
   const handleChangeAbout: React.ChangeEventHandler<HTMLInputElement> = e => {
     setEditedOffer(offer => ({
@@ -116,7 +151,7 @@ const EditOfferForm = ({
         placeholder="long"
       />
       <br />
-      <input type="submit" value="Create" />
+      <input type="submit" value={submit} />
       <input type="button" value="Cancel" onClick={onCancel} />
     </form>
   )
