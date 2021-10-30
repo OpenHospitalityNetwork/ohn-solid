@@ -7,6 +7,7 @@ import Offers from './features/offer/Offers'
 import Control from './features/Control'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import User from './features/user/User'
+import EditOffers from './features/offer/EditOffers'
 
 function App() {
   const login = useAppSelector(selectLogin)
@@ -25,6 +26,9 @@ function App() {
             <Switch>
               <Route path="/user/:webId">
                 <User />
+              </Route>
+              <Route path="/offers/edit">
+                <EditOffers />
               </Route>
               <Route path="/">
                 <Offers />

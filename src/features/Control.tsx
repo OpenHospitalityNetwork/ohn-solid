@@ -12,6 +12,8 @@ const Control = () => {
       <br />
       <Link to={`/user/${encodeURIComponent(login.webId)}`}>{login.webId}</Link>
       <br />
+      <Link to="/offers/edit">edit offers</Link>
+      <br />
       <button onClick={() => dispatch(logout())}>Logout</button>
     </nav>
   )

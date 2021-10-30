@@ -2,12 +2,16 @@ import { Offer } from './types'
 import { fetch } from '@inrupt/solid-client-authn-browser'
 import {
   asUrl,
+  buildThing,
+  createSolidDataset,
   getDecimal,
   getSolidDataset,
   getStringByLocaleAll,
   getThing,
   getThingAll,
   getUrl,
+  saveSolidDatasetAt,
+  setThing,
 } from '@inrupt/solid-client'
 import { rdf, rdfs } from 'rdf-namespaces'
 import { LatLngTuple } from 'leaflet'
@@ -58,4 +62,43 @@ export const getOffersOfUser = async (webId: string): Promise<Offer[]> => {
     .filter((offer): offer is Offer => offer !== null)
 
   return offers
+}
+
+export const createHospexDocument = async (uri: string) => {
+  try {
+    await getSolidDataset(uri, { fetch })
+  } catch (error) {
+    // save the solid dataset to the new place
+
+    await saveSolidDatasetAt(uri, createSolidDataset(), {
+      fetch,
+    })
+  }
+  throw new Error('document already exists')
+}
+
+export const createOffer = async (offer: Offer, document: string) => {
+  const dataset = await getSolidDataset(document, { fetch })
+
+  const locationUri = `${document}#location${Date.now()}`
+
+  const locationBuilder = buildThing({ url: locationUri })
+    .setUrl(rdf.type, wgs84('Point'))
+    .setDecimal(wgs84('lat'), offer.position[0])
+    .setDecimal(wgs84('long'), offer.position[1])
+
+  const offerBuilder = buildThing({ url: offer.id })
+    .setUrl(rdf.type, 'https://hospex.example.com/terms/0.1#Accommodation')
+    .setUrl('https://hospex.example.com/terms/0.1#offeredBy', offer.userId)
+    .setUrl(wgs84('location'), locationUri)
+    .setStringWithLocale(rdfs.comment, offer.about.en[0], 'en')
+
+  const newOfferThing = offerBuilder.build()
+  const newLocationThing = locationBuilder.build()
+
+  let newDataset = setThing(dataset, newOfferThing)
+  newDataset = setThing(newDataset, newLocationThing)
+  await saveSolidDatasetAt(document, newDataset, { fetch })
+
+  return offer
 }

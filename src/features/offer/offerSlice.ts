@@ -16,7 +16,21 @@ const initialState: OfferState = {
 export const getOffersOfUser = createAsyncThunk(
   'offer/getOffersOfUser',
   async (webId: string) => {
-    return await api.getOffersOfUser(webId)
+    try {
+      return await api.getOffersOfUser(webId)
+    } catch (error) {
+      // if we fail, we create hospex document
+      await api.createHospexDocument(api.getHospexUri(webId))
+      throw error
+    }
+  },
+)
+
+export const createOffer = createAsyncThunk(
+  'offer/create',
+  async ({ offer, document }: { offer: Offer; document: string }) => {
+    await api.createOffer(offer, document)
+    return offer
   },
 )
 
@@ -25,14 +39,20 @@ export const offerSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(getOffersOfUser.fulfilled, (state, action) => {
-      action.payload.forEach(offer => {
-        state.byId[offer.id] = offer
-        if (!state.allIds.includes(offer.id)) {
-          state.allIds.push(offer.id)
-        }
+    builder
+      .addCase(getOffersOfUser.fulfilled, (state, action) => {
+        action.payload.forEach(offer => {
+          state.byId[offer.id] = offer
+          if (!state.allIds.includes(offer.id)) {
+            state.allIds.push(offer.id)
+          }
+        })
       })
-    })
+      .addCase(createOffer.fulfilled, (state, action) => {
+        const offer = action.payload
+        state.byId[offer.id] = offer
+        state.allIds.push(offer.id)
+      })
   },
 })
 

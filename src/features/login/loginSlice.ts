@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../app/store'
+import { getOffersOfUser } from '../offer/offerSlice'
 import { getUser } from '../user/userSlice'
 import * as api from './loginAPI'
 
@@ -7,12 +8,14 @@ export interface LoginState {
   webId: string
   isLoggedIn: boolean
   status: 'success' | 'pending' | 'failed'
+  joinStatus: 'new' | 'pending' | 'old'
 }
 
 const initialState: LoginState = {
   webId: '',
   isLoggedIn: false,
   status: 'pending',
+  joinStatus: 'pending',
 }
 
 export const login = createAsyncThunk('login/login', api.login)
@@ -48,6 +51,13 @@ export const loginSlice = createSlice({
         state.isLoggedIn = initialState.isLoggedIn
         state.status = 'success'
         state.webId = initialState.webId
+      })
+      // here we set up flow for new users
+      .addCase(getOffersOfUser.rejected, state => {
+        state.joinStatus = 'new'
+      })
+      .addCase(getOffersOfUser.fulfilled, state => {
+        state.joinStatus = 'old'
       })
   },
 })
