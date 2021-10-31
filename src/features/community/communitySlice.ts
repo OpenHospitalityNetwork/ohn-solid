@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../app/store'
-import { Community } from './types'
-import * as api from './communityAPI'
 import { getUser } from '../user/userSlice'
+import * as api from './communityAPI'
+import { Community } from './types'
 
 export interface CommunityState {
   byId: { [id: string]: Community }
@@ -70,5 +70,28 @@ export const communitySlice = createSlice({
     })
   },
 })
+
+const selectCommunityIds = (state: RootState) => state.community.allIds
+
+const selectCommunityDict = (state: RootState) => state.community.byId
+
+export const selectCommunities = createSelector(
+  selectCommunityIds,
+  selectCommunityDict,
+  (ids, dict) => ids.map(id => dict[id]).filter(community => !!community),
+)
+
+export const selectLoggedUser = createSelector(
+  (state: RootState) => state.login.webId,
+  (state: RootState) => state.user.byId,
+  (webId, users) => users[webId],
+)
+
+export const selectCommunitiesOfLoggedUser = createSelector(
+  selectLoggedUser,
+  selectCommunityDict,
+  ({ communityIds }, communityDict) =>
+    communityIds.map(id => communityDict[id]).filter(community => !!community),
+)
 
 export default communitySlice.reducer

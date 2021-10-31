@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../app/store'
-import * as api from './userAPI'
-import { User } from './types'
-import { getOffersOfUser } from '../offer/offerSlice'
 import { getCommunitiesOfUser } from '../community/communitySlice'
+import { getOffersOfUser } from '../offer/offerSlice'
+import { User } from './types'
+import * as api from './userAPI'
 
 export interface UserState {
   byId: { [id: string]: User }
@@ -52,7 +52,7 @@ export default userSlice.reducer
 
 const selectUserId = (_: RootState, webId: string) => webId
 
-const selectUsers = (state: RootState) => state.user.byId
+export const selectUsers = (state: RootState) => state.user.byId
 
 export const selectUser = createSelector(
   selectUserId,

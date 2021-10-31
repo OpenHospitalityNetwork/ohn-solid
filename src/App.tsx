@@ -8,6 +8,7 @@ import Control from './features/Control'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import User from './features/user/User'
 import EditOffers from './features/offer/EditOffers'
+import Communities from './features/community/Communities'
 
 function App() {
   const login = useAppSelector(selectLogin)
@@ -29,6 +30,9 @@ function App() {
               </Route>
               <Route path="/offers/edit">
                 <EditOffers />
+              </Route>
+              <Route path="/communities">
+                <Communities />
               </Route>
               <Route path="/">
                 <Offers />
