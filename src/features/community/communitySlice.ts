@@ -14,6 +14,17 @@ const initialState: CommunityState = {
   allIds: [],
 }
 
+export const joinCommunity = createAsyncThunk(
+  'community/join',
+  async (communityId: string, { getState, dispatch }) => {
+    const state = getState() as RootState
+    const userId = state.login.webId
+    await api.joinCommunity(communityId, userId)
+    dispatch(getCommunity(communityId))
+    return { userId, communityId }
+  },
+)
+
 export const getCommunity = createAsyncThunk(
   'community/getCommunity',
   async (communityId: string, { getState, dispatch }) => {
@@ -90,8 +101,10 @@ export const selectLoggedUser = createSelector(
 export const selectCommunitiesOfLoggedUser = createSelector(
   selectLoggedUser,
   selectCommunityDict,
-  ({ communityIds }, communityDict) =>
-    communityIds.map(id => communityDict[id]).filter(community => !!community),
+  (user, communityDict) =>
+    user?.communityIds
+      .map(id => communityDict[id])
+      .filter(community => !!community) ?? [],
 )
 
 export default communitySlice.reducer

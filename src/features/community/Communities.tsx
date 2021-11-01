@@ -1,5 +1,6 @@
 import React from 'react'
-import { useAppSelector } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { joinCommunity } from './communitySlice'
 import {
   selectCommunities,
   selectCommunitiesOfLoggedUser,
@@ -8,6 +9,7 @@ import {
 const Communities = () => {
   const communities = useAppSelector(selectCommunities)
   const userCommunities = useAppSelector(selectCommunitiesOfLoggedUser)
+  const dispatch = useAppDispatch()
   return (
     <div>
       <h1>Communities</h1>
@@ -18,7 +20,9 @@ const Communities = () => {
             {userCommunities.includes(community) ? (
               'Member'
             ) : (
-              <button>Join</button>
+              <button onClick={() => dispatch(joinCommunity(community.id))}>
+                Join
+              </button>
             )}
           </li>
         ))}

@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import User from './features/user/User'
 import EditOffers from './features/offer/EditOffers'
 import Communities from './features/community/Communities'
+import { getCommunity } from './features/community/communitySlice'
 
 function App() {
   const login = useAppSelector(selectLogin)
@@ -16,6 +17,18 @@ function App() {
   useEffect(() => {
     dispatch(init())
   }, [dispatch])
+
+  // fetch featured communities
+  useEffect(() => {
+    if (login.isLoggedIn) {
+      ;['https://hospex-group-test.solidcommunity.net/profile/card#us'].forEach(
+        id => {
+          dispatch(getCommunity(id))
+        },
+      )
+    }
+  }, [login.isLoggedIn, dispatch])
+
   return (
     <div className="App">
       <header className="App-header">

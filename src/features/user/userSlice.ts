@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../app/store'
-import { getCommunitiesOfUser } from '../community/communitySlice'
+import {
+  getCommunitiesOfUser,
+  joinCommunity,
+} from '../community/communitySlice'
 import { getOffersOfUser } from '../offer/offerSlice'
 import { User } from './types'
 import * as api from './userAPI'
@@ -44,6 +47,11 @@ export const userSlice = createSlice({
         const { userId, communities } = action.payload
 
         state.byId[userId].communityIds = communities
+      })
+      .addCase(joinCommunity.fulfilled, (state, action) => {
+        const { userId, communityId } = action.payload
+        if (!state.byId[userId].communityIds.includes(communityId))
+          state.byId[userId].communityIds.push(communityId)
       })
   },
 })
