@@ -4,30 +4,28 @@ import {
   getSolidDataset,
   getStringEnglish,
   getThing,
+  getUrl,
   getUrlAll,
   saveSolidDatasetAt,
   setThing,
 } from '@inrupt/solid-client'
 import { fetch } from '@inrupt/solid-client-authn-browser'
-import { rdfs, vcard } from 'rdf-namespaces'
+import { sioc, vcard } from 'rdf-namespaces'
 import { getHospexUri } from '../offer/offerAPI'
 import { Community } from './types'
 
-export const joinCommunity = async (communityId: string, userId: string) => {
+export const joinCommunity = async (community: Community, userId: string) => {
   // append the user into the group inbox
   // TODO this must be much more secure, so people don't just add themselves into groups.
   // TODO this must be APPEND
-
-  const groupDataset = await getSolidDataset(communityId)
-
-  const group = getThing(groupDataset, communityId)
-
-  if (!group) throw new Error('Community not found')
-
-  const updatedGroup = buildThing(group).addUrl(vcard.hasMember, userId).build()
-
-  await saveSolidDatasetAt(communityId, setThing(groupDataset, updatedGroup), {
-    fetch,
+  fetch(community.groupId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/sparql-update' },
+    body: `
+        INSERT DATA {
+            <${community.groupId}> <${vcard.hasMember}> <${userId}> .
+        }
+    `,
   })
 
   // create :me 'https://hospex.example.com/terms/0.1#memberOf' communityId.
@@ -40,7 +38,7 @@ export const joinCommunity = async (communityId: string, userId: string) => {
   const newOrUpdatedHospexUser = buildThing(
     hospexUser ?? createThing({ url: userId }),
   )
-    .addUrl('https://hospex.example.com/terms/0.1#memberOf', communityId)
+    .addUrl('https://hospex.example.com/terms/0.1#memberOf', community.id)
     .build()
 
   await saveSolidDatasetAt(
@@ -68,19 +66,33 @@ export const getCommunitiesOfUser = async (
   return communities
 }
 
-export const getCommunity = async (id: string): Promise<Community | null> => {
+export const getCommunity = async (id: string): Promise<Community> => {
+  const community: Community = {
+    id,
+    name: {},
+    about: {},
+    groupId: '',
+    memberIds: [] as string[],
+  }
+
   const dataset = await getSolidDataset(id, { fetch })
 
-  const community = getThing(dataset, id)
-  if (!community) return null
+  const communityThing = getThing(dataset, id)
+  if (!communityThing) throw new Error("Community couldn't be fetched")
 
-  const memberIds = getUrlAll(community, vcard.hasMember)
+  community.name.en =
+    getStringEnglish(communityThing, sioc.name) ?? 'Unknown Name'
+  community.groupId = getUrl(communityThing, sioc.has_usergroup) ?? ''
 
-  const name = getStringEnglish(community, rdfs.label) ?? 'Unknown Name'
+  community.about.en = getStringEnglish(communityThing, sioc.about) ?? ''
 
-  return {
-    id,
-    name,
-    memberIds,
+  try {
+    const memberDataset = await getSolidDataset(community.groupId, { fetch })
+    const memberThing = getThing(memberDataset, community.groupId)
+    if (memberThing)
+      community.memberIds = getUrlAll(memberThing, vcard.hasMember)
+  } catch (error) {
+    console.log(error)
   }
+  return community
 }

@@ -21,11 +21,12 @@ function App() {
   // fetch featured communities
   useEffect(() => {
     if (login.isLoggedIn) {
-      ;['https://hospex-group-test.solidcommunity.net/profile/card#us'].forEach(
-        id => {
-          dispatch(getCommunity(id))
-        },
-      )
+      ;[
+        'https://hospex-group-test.solidcommunity.net/profile/card#us',
+        'https://mrkvon.inrupt.net/hospex/sleepy-bike/community#us',
+      ].forEach(id => {
+        dispatch(getCommunity(id))
+      })
     }
   }, [login.isLoggedIn, dispatch])
 

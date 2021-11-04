@@ -16,11 +16,11 @@ const Communities = () => {
       <ul>
         {communities.map(community => (
           <li key={community.id}>
-            {community.name}{' '}
+            {community.name.en}{' '}
             {userCommunities.includes(community) ? (
               'Member'
             ) : (
-              <button onClick={() => dispatch(joinCommunity(community.id))}>
+              <button onClick={() => dispatch(joinCommunity(community))}>
                 Join
               </button>
             )}

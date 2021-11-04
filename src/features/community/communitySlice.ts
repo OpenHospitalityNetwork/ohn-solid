@@ -16,12 +16,12 @@ const initialState: CommunityState = {
 
 export const joinCommunity = createAsyncThunk(
   'community/join',
-  async (communityId: string, { getState, dispatch }) => {
+  async (community: Community, { getState, dispatch }) => {
     const state = getState() as RootState
     const userId = state.login.webId
-    await api.joinCommunity(communityId, userId)
-    dispatch(getCommunity(communityId))
-    return { userId, communityId }
+    await api.joinCommunity(community, userId)
+    dispatch(getCommunity(community.id))
+    return { userId, communityId: community.id }
   },
 )
 
