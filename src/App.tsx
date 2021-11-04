@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import './App.css'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import Login from './features/login/Login'
 import { init, selectLogin } from './features/login/loginSlice'
@@ -32,31 +31,29 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        {login.status === 'pending' ? (
-          <i>Loading</i>
-        ) : login.isLoggedIn ? (
-          <Router>
-            <Control />
-            <Switch>
-              <Route path="/user/:webId">
-                <User />
-              </Route>
-              <Route path="/offers/edit">
-                <EditOffers />
-              </Route>
-              <Route path="/communities">
-                <Communities />
-              </Route>
-              <Route path="/">
-                <Offers />
-              </Route>
-            </Switch>
-          </Router>
-        ) : (
-          <Login />
-        )}
-      </header>
+      {login.status === 'pending' ? (
+        <i>Loading</i>
+      ) : login.isLoggedIn ? (
+        <Router>
+          <Control />
+          <Switch>
+            <Route path="/user/:webId">
+              <User />
+            </Route>
+            <Route path="/offers/edit">
+              <EditOffers />
+            </Route>
+            <Route path="/communities">
+              <Communities />
+            </Route>
+            <Route path="/">
+              <Offers />
+            </Route>
+          </Switch>
+        </Router>
+      ) : (
+        <Login />
+      )}
     </div>
   )
 }
