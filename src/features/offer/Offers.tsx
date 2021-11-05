@@ -49,7 +49,7 @@ const Offers = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-evenly">
+    <div className="flex flex-col items-center justify-evenly my-8">
       <header>
         <h1>
           Offers of{' '}
@@ -59,24 +59,24 @@ const Offers = () => {
         </h1>
       </header>
       <ul className="flex flex-wrap gap-6 justify-center">
-        {offers.map(offer =>
-          offer === offerToEdit ? (
-            <EditOfferForm
-              offer={offerToEdit}
-              onSubmit={handleUpdate}
-              onCancel={handleCancel}
-              submit="Update"
-            />
-          ) : (
-            <li key={offer.id}>
+        {offers.map(offer => (
+          <li key={offer.id}>
+            {offer === offerToEdit ? (
+              <EditOfferForm
+                offer={offerToEdit}
+                onSubmit={handleUpdate}
+                onCancel={handleCancel}
+                submit="Update"
+              />
+            ) : (
               <OfferItem
                 offer={offer}
                 editable
                 onClickEdit={() => handleClickEdit(offer.id)}
               />
-            </li>
-          ),
-        )}
+            )}
+          </li>
+        ))}
         {create && (
           <EditOfferForm
             offer={{

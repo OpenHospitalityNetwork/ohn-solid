@@ -1,9 +1,10 @@
 import React from 'react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { RootState } from '../../app/store'
 import Community from '../community/Community'
+import { joinCommunity, selectLoggedUser } from '../community/communitySlice'
 import Offer from '../offer/Offer'
 import {
   selectUser,
@@ -14,15 +15,19 @@ import {
 const User = () => {
   const params = useParams<{ webId: string }>()
   const webId = decodeURIComponent(params.webId)
-  const user = useSelector((state: RootState) => selectUser(state, webId))
-  const offers = useSelector((state: RootState) =>
+  const user = useAppSelector((state: RootState) => selectUser(state, webId))
+  const offers = useAppSelector((state: RootState) =>
     selectUserOffers(state, webId),
   )
-  const communities = useSelector((state: RootState) =>
+  const loggedUser = useAppSelector(selectLoggedUser)
+  const communities = useAppSelector((state: RootState) =>
     selectUserCommunities(state, webId),
   )
+
+  const dispatch = useAppDispatch()
+
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 my-8">
       <header className="flex items-center gap-2">
         <h1 className="italic">
           Profile of <span className="not-italic">{user.name}</span>
@@ -62,7 +67,14 @@ const User = () => {
         <ul className="flex flex-wrap gap-6 justify-center">
           {communities.map(community => (
             <li key={community.id}>
-              <Community community={community} />
+              <Community
+                community={community}
+                isMember={
+                  loggedUser.communityIds.includes(community.id) &&
+                  community.memberIds.includes(loggedUser.id)
+                }
+                onJoin={() => dispatch(joinCommunity(community))}
+              />
             </li>
           ))}
         </ul>

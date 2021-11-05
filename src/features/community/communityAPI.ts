@@ -72,6 +72,7 @@ export const getCommunity = async (id: string): Promise<Community> => {
     name: {},
     about: {},
     groupId: '',
+    image: 'https://picsum.photos/400', // TODO implement fetching photo
     memberIds: [] as string[],
   }
 
