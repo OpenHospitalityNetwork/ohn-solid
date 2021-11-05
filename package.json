@@ -20,6 +20,7 @@
     "rdf-namespaces": "^1.9.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
     "react-leaflet": "^3.2.2",
     "react-leaflet-markercluster": "^3.0.0-rc1",
     "react-modal": "^3.14.3",
