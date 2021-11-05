@@ -84,7 +84,7 @@ const Offers = () => {
               userId,
               position: [0, 0],
               about: {
-                en: [''],
+                en: '',
               },
             }}
             onSubmit={handleCreate}

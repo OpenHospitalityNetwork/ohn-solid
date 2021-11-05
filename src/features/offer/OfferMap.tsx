@@ -5,7 +5,7 @@ import { selectOffers } from './offerSlice'
 
 const Offers = () => {
   const offers = useAppSelector(selectOffers)
-  return <Map points={offers} />
+  return <Map offers={offers} />
 }
 
 export default Offers

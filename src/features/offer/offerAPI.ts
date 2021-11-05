@@ -1,12 +1,10 @@
-import { Offer } from './types'
-import { fetch } from '@inrupt/solid-client-authn-browser'
 import {
   asUrl,
   buildThing,
   createSolidDataset,
   getDecimal,
   getSolidDataset,
-  getStringByLocaleAll,
+  getStringEnglish,
   getThing,
   getThingAll,
   getUrl,
@@ -15,8 +13,11 @@ import {
   setThing,
   ThingPersisted,
 } from '@inrupt/solid-client'
-import { rdf, rdfs } from 'rdf-namespaces'
+import { fetch } from '@inrupt/solid-client-authn-browser'
 import { LatLngTuple } from 'leaflet'
+import { rdf, rdfs } from 'rdf-namespaces'
+import { LanguageString } from '../../types'
+import { Offer } from './types'
 
 const wgs84 = (a: string) => 'http://www.w3.org/2003/01/geo/wgs84_pos#' + a
 
@@ -52,13 +53,13 @@ export const getOffersOfUser = async (webId: string): Promise<Offer[]> => {
 
       if (lat === null || long === null) return null
 
-      const about = getStringByLocaleAll(thing, rdfs.comment)
+      const about = getStringEnglish(thing, rdfs.comment) ?? ''
 
       return {
         id,
         userId: webId,
         position: [lat, long] as LatLngTuple,
-        about: Object.fromEntries(about),
+        about: { en: about } as LanguageString,
       }
     })
     .filter((offer): offer is Offer => offer !== null)
@@ -93,7 +94,7 @@ export const createOffer = async (offer: Offer, document: string) => {
     .setUrl(rdf.type, 'https://hospex.example.com/terms/0.1#Accommodation')
     .setUrl('https://hospex.example.com/terms/0.1#offeredBy', offer.userId)
     .setUrl(wgs84('location'), locationUri)
-    .setStringWithLocale(rdfs.comment, offer.about.en[0], 'en')
+    .setStringWithLocale(rdfs.comment, offer.about.en, 'en')
 
   const newOfferThing = offerBuilder.build()
   const newLocationThing = locationBuilder.build()
@@ -117,7 +118,7 @@ export const updateOffer = async (offer: Offer, document: string) => {
     if (locationThing) {
       const offerThingBuilder = buildThing(offerThing).setStringEnglish(
         rdfs.comment,
-        offer.about.en[0],
+        offer.about.en,
       )
       const locationThingBuilder = buildThing(locationThing)
         .setDecimal(wgs84('lat'), offer.position[0])

@@ -25,7 +25,7 @@ const EditOffer = ({
       setEditedOffer(offer => ({
         ...offer,
         about: {
-          en: [e.target.value],
+          en: e.target.value,
         },
       }))
     }
@@ -53,7 +53,7 @@ const EditOffer = ({
         className="w-56 h-56"
       />
       <textarea
-        value={editedOffer.about.en[0] ?? ''}
+        value={editedOffer.about.en ?? ''}
         onChange={handleChangeAbout}
         placeholder="about"
       />
