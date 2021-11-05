@@ -40,6 +40,13 @@ export const updateOffer = createAsyncThunk(
   },
 )
 
+export const removeOffer = createAsyncThunk(
+  'offer/remove',
+  async (offer: Offer) => {
+    return await api.removeOffer(offer)
+  },
+)
+
 export const offerSlice = createSlice({
   name: 'offer',
   initialState,
@@ -62,6 +69,11 @@ export const offerSlice = createSlice({
       .addCase(updateOffer.fulfilled, (state, action) => {
         const offer = action.payload
         state.byId[offer.id] = offer
+      })
+      .addCase(removeOffer.fulfilled, (state, action) => {
+        const offer = action.payload
+        delete state.byId[offer.id]
+        state.allIds = state.allIds.filter(id => id !== offer.id)
       })
   },
 })

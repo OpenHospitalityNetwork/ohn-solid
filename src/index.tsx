@@ -5,6 +5,10 @@ import App from './App'
 import { store } from './app/store'
 import { Provider } from 'react-redux'
 import * as serviceWorker from './serviceWorker'
+import Modal from 'react-modal'
+
+// this is required by react-modal library for proper modal accessibility
+Modal.setAppElement('#root')
 
 ReactDOM.render(
   <React.StrictMode>

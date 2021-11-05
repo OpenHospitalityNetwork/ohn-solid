@@ -10,6 +10,7 @@ import {
   getThing,
   getThingAll,
   getUrl,
+  removeThing,
   saveSolidDatasetAt,
   setThing,
   ThingPersisted,
@@ -129,4 +130,20 @@ export const updateOffer = async (offer: Offer, document: string) => {
     throw new Error('location to update not found')
   }
   throw new Error('offer to update not found')
+}
+
+export const removeOffer = async (offer: Offer) => {
+  const dataset = await getSolidDataset(offer.id, { fetch })
+  const offerThing = getThing(dataset, offer.id) as ThingPersisted
+
+  if (offerThing) {
+    const locationUri = getUrl(offerThing, wgs84('location')) ?? ''
+
+    let updatedDataset = removeThing(dataset, locationUri)
+    updatedDataset = removeThing(updatedDataset, offer.id)
+
+    await saveSolidDatasetAt(offer.id, updatedDataset, { fetch })
+    return offer
+  }
+  throw new Error('offer to remove not found')
 }
