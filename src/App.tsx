@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import Login from './features/login/Login'
 import { init, selectLogin } from './features/login/loginSlice'
-import Offers from './features/offer/Offers'
+import OfferMap from './features/offer/OfferMap'
 import Control from './features/Control'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import User from './features/user/User'
-import EditOffers from './features/offer/EditOffers'
+import Offers from './features/offer/Offers'
 import Communities from './features/community/Communities'
 import { getCommunity } from './features/community/communitySlice'
 
@@ -37,17 +37,17 @@ function App() {
         <Router>
           <Control />
           <Switch>
-            <Route path="/user/:webId">
+            <Route path="/users/:webId">
               <User />
             </Route>
-            <Route path="/offers/edit">
-              <EditOffers />
+            <Route path="/offers">
+              <Offers />
             </Route>
             <Route path="/communities">
               <Communities />
             </Route>
             <Route path="/">
-              <Offers />
+              <OfferMap />
             </Route>
           </Switch>
         </Router>

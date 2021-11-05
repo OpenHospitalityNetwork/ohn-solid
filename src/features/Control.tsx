@@ -10,9 +10,9 @@ const Control = () => {
     <nav style={{ position: 'fixed', top: '1rem', right: '1em', zIndex: 500 }}>
       <Link to="/">map</Link>
       <br />
-      <Link to={`/user/${encodeURIComponent(login.webId)}`}>my profile</Link>
+      <Link to={`/users/${encodeURIComponent(login.webId)}`}>my profile</Link>
       <br />
-      <Link to="/offers/edit">my offers</Link>
+      <Link to="/offers">my offers</Link>
       <br />
       <Link to="/communities">communities</Link>
       <br />

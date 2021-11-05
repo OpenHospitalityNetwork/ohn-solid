@@ -15,7 +15,7 @@ const Login = () => {
       <div className="space-y-10">
         <section className="flex flex-col items-center space-y-2">
           <header>
-            <h1 className="text-2xl font-bold">Open Hospitality</h1>
+            <h1>Open Hospitality</h1>
             <p className="italic">hospitality, decentralized</p>
           </header>
           <div className="w-80 flex items-center justify-evenly">
@@ -53,10 +53,7 @@ const Login = () => {
             value={provider}
             onChange={e => setProvider(e.target.value)}
           />
-          <button
-            className="bg-blue-900 text-blue-50 rounded px-4 py-1 w-full"
-            type="submit"
-          >
+          <button className="bg-blue-900 text-blue-50 w-full" type="submit">
             Sign In
           </button>
         </form>
