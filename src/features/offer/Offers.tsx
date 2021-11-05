@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { selectLoggedUser } from '../community/communitySlice'
+import { selectLogin } from '../login/loginSlice'
 import { selectUserOffers } from '../user/userSlice'
 import EditOfferForm from './EditOffer'
 import OfferItem from './Offer'
@@ -11,9 +12,10 @@ import { Offer } from './types'
 
 const Offers = () => {
   const user = useAppSelector(selectLoggedUser)
-  const offers = useAppSelector(state => selectUserOffers(state, user.id))
+  const { webId: userId } = useAppSelector(selectLogin)
+  const offers = useAppSelector(state => selectUserOffers(state, userId))
   const dispatch = useAppDispatch()
-  const document = getHospexUri(user.id)
+  const document = getHospexUri(userId)
 
   const [create, setCreate] = useState(false)
   const [edit, setEdit] = useState('')
@@ -51,7 +53,9 @@ const Offers = () => {
       <header>
         <h1>
           Offers of{' '}
-          <Link to={`/users/${encodeURIComponent(user.id)}`}>{user.name}</Link>
+          <Link to={`/users/${encodeURIComponent(userId)}`}>
+            {user?.name ?? 'user'}
+          </Link>
         </h1>
       </header>
       <ul className="flex flex-wrap gap-6 justify-center">
@@ -76,7 +80,7 @@ const Offers = () => {
           <EditOfferForm
             offer={{
               id: `${document}#offer${Date.now()}`,
-              userId: user.id,
+              userId,
               position: [0, 0],
               about: {
                 en: [''],
