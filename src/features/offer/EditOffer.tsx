@@ -1,6 +1,6 @@
-import { LatLngTuple } from 'leaflet'
+import { LatLngTuple, Map } from 'leaflet'
 import React, { FormEventHandler, useEffect, useState } from 'react'
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet'
 import { Offer } from './types'
 
 const EditOffer = ({
@@ -47,9 +47,6 @@ const EditOffer = ({
       className="w-64 p-4 bg-blue-200 rounded flex flex-col gap-4"
       onSubmit={handleSubmit}
     >
-      <section className="bg-yellow-200 p-2 -mb-4 text-sm italic">
-        drag map to a new location
-      </section>
       <LocationEdit
         location={editedOffer.position}
         onChange={handleChangePosition}
@@ -79,14 +76,25 @@ const LocationDrag = ({
 }: {
   onDrag: (location: LatLngTuple) => void
 }) => {
-  const map = useMapEvents({
-    drag: () => {
-      const { lat, lng } = map.getCenter()
-      onDrag([lat, normalizeLng(lng)])
-      map.setView([lat, normalizeLng(lng)])
-    },
+  const map = useMapEvent('drag', () => {
+    const { lat, lng } = map.getCenter()
+    onDrag([lat, normalizeLng(lng)])
+    map.setView([lat, normalizeLng(lng)])
   })
 
+  return null
+}
+
+const CurrentLocation = ({
+  onLocationFound,
+}: {
+  onLocationFound: (location: LatLngTuple) => void
+}) => {
+  const map = useMapEvent('locationfound', e => {
+    const { lat, lng } = e.latlng
+    onLocationFound([lat, lng])
+    map.flyTo([lat, normalizeLng(lng)])
+  })
   return null
 }
 
@@ -95,19 +103,35 @@ const LocationEdit: React.FC<{
   onChange: (location: LatLngTuple) => void
   className?: string
 }> = ({ location, className = '', onChange }) => {
+  const [map, setMap] = useState<Map>()
+
   return (
-    <MapContainer
-      attributionControl={false}
-      center={location}
-      zoom={12}
-      scrollWheelZoom="center"
-      doubleClickZoom="center"
-      touchZoom="center"
-      className={className}
-    >
-      <LocationDrag onDrag={onChange} />
-      <TileLayer url="https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
-      <Marker position={location} />
-    </MapContainer>
+    <div>
+      <section className="bg-yellow-200 p-2 text-sm italic">
+        drag map to a new location or{' '}
+        <button
+          className="bg-yellow-50"
+          type="button"
+          onClick={() => map?.locate()}
+        >
+          find your location
+        </button>
+      </section>
+      <MapContainer
+        attributionControl={false}
+        center={location}
+        zoom={12}
+        scrollWheelZoom="center"
+        doubleClickZoom="center"
+        touchZoom="center"
+        className={className}
+        whenCreated={setMap}
+      >
+        <CurrentLocation onLocationFound={onChange} />
+        <LocationDrag onDrag={onChange} />
+        <TileLayer url="https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
+        <Marker position={location} />
+      </MapContainer>
+    </div>
   )
 }
