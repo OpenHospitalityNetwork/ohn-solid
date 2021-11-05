@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { selectLoggedUser } from '../community/communitySlice'
 import { selectUserOffers } from '../user/userSlice'
-import EditOfferForm from './EditOfferForm'
+import EditOfferForm from './EditOffer'
 import OfferItem from './Offer'
 import { getHospexUri } from './offerAPI'
 import { createOffer, updateOffer } from './offerSlice'
@@ -46,33 +46,6 @@ const Offers = () => {
     setEdit('')
   }
 
-  if (create)
-    return (
-      <EditOfferForm
-        offer={{
-          id: `${document}#offer${Date.now()}`,
-          userId: user.id,
-          position: [0, 0],
-          about: {
-            en: [''],
-          },
-        }}
-        onSubmit={handleCreate}
-        onCancel={handleCancel}
-        submit="Create"
-      />
-    )
-
-  if (offerToEdit)
-    return (
-      <EditOfferForm
-        offer={offerToEdit}
-        onSubmit={handleUpdate}
-        onCancel={handleCancel}
-        submit="Update"
-      />
-    )
-
   return (
     <div className="flex flex-col items-center justify-evenly">
       <header>
@@ -82,16 +55,40 @@ const Offers = () => {
         </h1>
       </header>
       <ul className="flex flex-wrap gap-6 justify-center">
-        {offers.map(offer => (
-          <li key={offer.id}>
-            <OfferItem
-              offer={offer}
-              onClickEdit={() => handleClickEdit(offer.id)}
+        {offers.map(offer =>
+          offer === offerToEdit ? (
+            <EditOfferForm
+              offer={offerToEdit}
+              onSubmit={handleUpdate}
+              onCancel={handleCancel}
+              submit="Update"
             />
-          </li>
-        ))}
+          ) : (
+            <li key={offer.id}>
+              <OfferItem
+                offer={offer}
+                onClickEdit={() => handleClickEdit(offer.id)}
+              />
+            </li>
+          ),
+        )}
+        {create && (
+          <EditOfferForm
+            offer={{
+              id: `${document}#offer${Date.now()}`,
+              userId: user.id,
+              position: [0, 0],
+              about: {
+                en: [''],
+              },
+            }}
+            onSubmit={handleCreate}
+            onCancel={handleCancel}
+            submit="Create"
+          />
+        )}
       </ul>
-      <button onClick={handleClickAdd}>Add Offer</button>
+      {!create && <button onClick={handleClickAdd}>Add Offer</button>}
     </div>
   )
 }
