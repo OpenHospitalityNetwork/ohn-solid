@@ -47,6 +47,9 @@ const EditOffer = ({
       className="w-64 p-4 bg-blue-200 rounded flex flex-col gap-4"
       onSubmit={handleSubmit}
     >
+      <section className="bg-yellow-200 p-2 -mb-4 text-sm italic">
+        drag map to a new location
+      </section>
       <LocationEdit
         location={editedOffer.position}
         onChange={handleChangePosition}
