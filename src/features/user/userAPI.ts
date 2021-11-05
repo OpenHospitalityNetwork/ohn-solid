@@ -27,7 +27,7 @@ export const getUser = async (webId: string): Promise<User | null> => {
     id: webId,
     name,
     avatar,
-    about,
+    about: { en: about },
     communityIds: [],
   }
 }

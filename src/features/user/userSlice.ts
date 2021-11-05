@@ -66,7 +66,13 @@ export const selectUser = createSelector(
   selectUserId,
   selectUsers,
   (webId, users) =>
-    users[webId] ?? { id: webId, name: '', avatar: '', about: '' },
+    users[webId] ?? {
+      id: webId,
+      name: '',
+      avatar: '',
+      about: '',
+      communityIds: [],
+    },
 )
 
 const selectOffers = (state: RootState) => state.offer.byId
@@ -76,4 +82,17 @@ export const selectUserOffers = createSelector(
   selectOffers,
   (userId, offers) =>
     Object.values(offers).filter(offer => offer.userId === userId),
+)
+
+const selectCommunities = (state: RootState) => state.community.byId
+
+export const selectUserCommunities = createSelector(
+  selectUser,
+  selectCommunities,
+  (user, communities) =>
+    Object.values(communities).filter(
+      community =>
+        user?.communityIds?.includes(community.id) &&
+        community.memberIds.includes(user.id),
+    ),
 )

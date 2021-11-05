@@ -6,10 +6,22 @@ import ConfirmRemoveOffer from './ConfirmRemoveOffer'
 import { removeOffer } from './offerSlice'
 import { Offer as OfferType } from './types'
 
-const Offer: React.FC<{
+interface OfferProps {
+  offer: OfferType
+  editable?: false
+}
+
+interface EditableOfferProps {
   offer: OfferType
   onClickEdit: MouseEventHandler<HTMLButtonElement>
-}> = ({ offer, onClickEdit }) => {
+  editable: true
+}
+
+const Offer: React.FC<OfferProps | EditableOfferProps> = ({
+  offer,
+  editable = false,
+  ...props
+}) => {
   const dispatch = useAppDispatch()
   const [requestingDelete, setRequestingDelete] = useState(false)
   const handleRemove = () => {
@@ -19,19 +31,28 @@ const Offer: React.FC<{
   return (
     <div className="w-64 p-4 bg-blue-50 rounded flex flex-col gap-4">
       <Location location={offer.position} className="w-56 h-56" />
-      <section className="whitespace-pre-line">{offer.about.en}</section>
-      <button className="bg-white" onClick={onClickEdit}>
-        edit
-      </button>
-      <button className="bg-red-400" onClick={() => setRequestingDelete(true)}>
-        remove
-      </button>
-      {requestingDelete && (
-        <ConfirmRemoveOffer
-          confirmString={new globalThis.URL(offer.id).hash}
-          onConfirm={handleRemove}
-          onCancel={() => setRequestingDelete(false)}
-        />
+      <section className="whitespace-pre-line text-justify">
+        {offer.about.en}
+      </section>
+      {editable && 'onClickEdit' in props && (
+        <>
+          <button className="bg-white" onClick={props.onClickEdit}>
+            edit
+          </button>
+          <button
+            className="bg-red-400"
+            onClick={() => setRequestingDelete(true)}
+          >
+            remove
+          </button>
+          {requestingDelete && (
+            <ConfirmRemoveOffer
+              confirmString={new globalThis.URL(offer.id).hash}
+              onConfirm={handleRemove}
+              onCancel={() => setRequestingDelete(false)}
+            />
+          )}
+        </>
       )}
     </div>
   )

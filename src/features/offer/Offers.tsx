@@ -71,6 +71,7 @@ const Offers = () => {
             <li key={offer.id}>
               <OfferItem
                 offer={offer}
+                editable
                 onClickEdit={() => handleClickEdit(offer.id)}
               />
             </li>
