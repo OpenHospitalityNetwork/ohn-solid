@@ -53,9 +53,10 @@ const EditOffer = ({
         className="w-56 h-56"
       />
       <textarea
+        className="h-40 p-1"
         value={editedOffer.about.en ?? ''}
         onChange={handleChangeAbout}
-        placeholder="about"
+        placeholder="What can you and your place offer to guests?"
       />
       <button className="bg-green-300 hover:bg-green-400" type="submit">
         {submit}

@@ -77,23 +77,31 @@ const Offers = () => {
             )}
           </li>
         ))}
-        {create && (
-          <EditOfferForm
-            offer={{
-              id: `${document}#offer${Date.now()}`,
-              userId,
-              position: [0, 0],
-              about: {
-                en: '',
-              },
-            }}
-            onSubmit={handleCreate}
-            onCancel={handleCancel}
-            submit="Create"
-          />
-        )}
+        <li>
+          {create ? (
+            <EditOfferForm
+              offer={{
+                id: `${document}#offer${Date.now()}`,
+                userId,
+                position: [51.477, 0],
+                about: {
+                  en: '',
+                },
+              }}
+              onSubmit={handleCreate}
+              onCancel={handleCancel}
+              submit="Create"
+            />
+          ) : !edit ? (
+            <button
+              className="w-64 h-64 p-4 bg-blue-400 rounded flex items-center justify-center text-5xl font-bold text-indigo-50"
+              onClick={handleClickAdd}
+            >
+              + Add
+            </button>
+          ) : null}
+        </li>
       </ul>
-      {!create && <button onClick={handleClickAdd}>Add Offer</button>}
     </div>
   )
 }
