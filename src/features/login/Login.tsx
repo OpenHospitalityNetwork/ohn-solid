@@ -39,7 +39,7 @@ const Login = () => {
           </div>
         </section>
         <form
-          className="w-96 flex flex-col items-center space-y-2"
+          className="w-96 flex flex-col items-center gap-2"
           onSubmit={handleSubmit}
         >
           <header className="text-xl font-bold">
@@ -53,7 +53,10 @@ const Login = () => {
             value={provider}
             onChange={e => setProvider(e.target.value)}
           />
-          <button className="bg-blue-900 text-blue-50 w-full" type="submit">
+          <button
+            className="bg-pink-300 hover:bg-pink-400 focus:bg-pink-400 text-blue-50 w-full text-lg"
+            type="submit"
+          >
             Sign In
           </button>
         </form>
