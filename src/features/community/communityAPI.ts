@@ -12,12 +12,12 @@ import {
 import { fetch } from '@inrupt/solid-client-authn-browser'
 import { sioc, vcard } from 'rdf-namespaces'
 import { getHospexUri } from '../offer/offerAPI'
+import { getProtectedImage } from '../user/userAPI'
 import { Community } from './types'
 
 export const joinCommunity = async (community: Community, userId: string) => {
   // append the user into the group inbox
   // TODO this must be much more secure, so people don't just add themselves into groups.
-  // TODO this must be APPEND
   fetch(community.groupId, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/sparql-update' },
@@ -72,7 +72,7 @@ export const getCommunity = async (id: string): Promise<Community> => {
     name: {},
     about: {},
     groupId: '',
-    image: 'https://picsum.photos/400', // TODO implement fetching photo
+    image: await getProtectedImage('https://picsum.photos/400'), // TODO implement fetching photo
     memberIds: [] as string[],
   }
 

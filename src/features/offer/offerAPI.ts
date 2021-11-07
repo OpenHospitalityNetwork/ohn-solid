@@ -1,7 +1,7 @@
 import {
   asUrl,
   buildThing,
-  createSolidDataset,
+  createThing,
   getDecimal,
   getSolidDataset,
   getStringEnglish,
@@ -67,19 +67,6 @@ export const getOffersOfUser = async (webId: string): Promise<Offer[]> => {
   return offers
 }
 
-export const createHospexDocument = async (uri: string) => {
-  try {
-    await getSolidDataset(uri, { fetch })
-  } catch (error) {
-    // save the solid dataset to the new place
-
-    await saveSolidDatasetAt(uri, createSolidDataset(), {
-      fetch,
-    })
-  }
-  throw new Error('document already exists')
-}
-
 export const createOffer = async (offer: Offer, document: string) => {
   const dataset = await getSolidDataset(document, { fetch })
 
@@ -96,11 +83,19 @@ export const createOffer = async (offer: Offer, document: string) => {
     .setUrl(wgs84('location'), locationUri)
     .setStringWithLocale(rdfs.comment, offer.about.en, 'en')
 
+  const userThing =
+    getThing(dataset, offer.userId) ?? createThing({ url: offer.userId })
+
+  const newUserThing = buildThing(userThing)
+    .addUrl('https://hospex.example.com/terms/0.1#offers', offer.id)
+    .build()
+
   const newOfferThing = offerBuilder.build()
   const newLocationThing = locationBuilder.build()
 
   let newDataset = setThing(dataset, newOfferThing)
   newDataset = setThing(newDataset, newLocationThing)
+  newDataset = setThing(newDataset, newUserThing)
   await saveSolidDatasetAt(document, newDataset, { fetch })
 
   return offer

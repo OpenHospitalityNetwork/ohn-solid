@@ -16,13 +16,7 @@ const initialState: OfferState = {
 export const getOffersOfUser = createAsyncThunk(
   'offer/getOffersOfUser',
   async (webId: string) => {
-    try {
-      return await api.getOffersOfUser(webId)
-    } catch (error) {
-      // if we fail, we create hospex document
-      await api.createHospexDocument(api.getHospexUri(webId))
-      throw error
-    }
+    return await api.getOffersOfUser(webId)
   },
 )
 

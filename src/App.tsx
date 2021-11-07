@@ -8,11 +8,18 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import User from './features/user/User'
 import Offers from './features/offer/Offers'
 import Communities from './features/community/Communities'
-import { getCommunity } from './features/community/communitySlice'
+import {
+  getCommunity,
+  selectLoggedUser,
+} from './features/community/communitySlice'
+import Loading from './components/Loading'
+import FirstTime from './features/onboarding/FirstTime'
+import Onboarding from './features/onboarding/Onboarding'
 
 function App() {
   const login = useAppSelector(selectLogin)
   const dispatch = useAppDispatch()
+  const loggedUser = useAppSelector(selectLoggedUser)
   useEffect(() => {
     dispatch(init())
   }, [dispatch])
@@ -28,31 +35,34 @@ function App() {
     }
   }, [login.isLoggedIn, dispatch])
 
+  if (login.status === 'pending') return <Loading message="Initializing..." />
+
+  if (!login.isLoggedIn) return <Login />
+
+  if (!loggedUser) return <Loading message="Fetching your profile..." />
+
+  if (loggedUser.hospexDocuments.length === 0) return <FirstTime />
+
   return (
     <div className="App">
-      {login.status === 'pending' ? (
-        <i>Loading</i>
-      ) : login.isLoggedIn ? (
-        <Router>
-          <Control />
-          <Switch>
-            <Route path="/users/:webId">
-              <User />
-            </Route>
-            <Route path="/offers">
-              <Offers />
-            </Route>
-            <Route path="/communities">
-              <Communities />
-            </Route>
-            <Route path="/">
-              <OfferMap />
-            </Route>
-          </Switch>
-        </Router>
-      ) : (
-        <Login />
-      )}
+      <Router>
+        <Onboarding />
+        <Control />
+        <Switch>
+          <Route path="/users/:webId">
+            <User />
+          </Route>
+          <Route path="/offers">
+            <Offers />
+          </Route>
+          <Route path="/communities">
+            <Communities />
+          </Route>
+          <Route path="/">
+            <OfferMap />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   )
 }

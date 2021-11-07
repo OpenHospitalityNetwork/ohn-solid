@@ -3,6 +3,7 @@ import offerReducer from '../features/offer/offerSlice'
 import loginReducer from '../features/login/loginSlice'
 import userReducer from '../features/user/userSlice'
 import communityReducer from '../features/community/communitySlice'
+import onboardingReducer from '../features/onboarding/onboardingSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     community: communityReducer,
     user: userReducer,
     login: loginReducer,
+    onboarding: onboardingReducer,
   },
 })
 

@@ -6,4 +6,6 @@ export interface User {
   avatar: string
   about: LanguageString
   communityIds: string[]
+  offerIds: string[]
+  hospexDocuments: string[]
 }

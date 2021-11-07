@@ -22,9 +22,19 @@ export const getUser = createAsyncThunk(
   'user/fetchUser',
   async (webId: string, { dispatch }) => {
     const response = await api.getUser(webId)
-    dispatch(getOffersOfUser(webId))
-    dispatch(getCommunitiesOfUser(webId))
+    if (response && response.hospexDocuments.length > 0) {
+      dispatch(getOffersOfUser(webId))
+      dispatch(getCommunitiesOfUser(webId))
+    }
     return response
+  },
+)
+
+export const createHospexDocument = createAsyncThunk(
+  'user/createHospexDocument',
+  async ({ userId, documentId }: { userId: string; documentId: string }) => {
+    await api.createHospexDocument(documentId)
+    return { userId, documentId }
   },
 )
 
@@ -52,6 +62,10 @@ export const userSlice = createSlice({
         const { userId, communityId } = action.payload
         if (!state.byId[userId].communityIds.includes(communityId))
           state.byId[userId].communityIds.push(communityId)
+      })
+      .addCase(createHospexDocument.fulfilled, (state, action) => {
+        const { userId, documentId } = action.payload
+        state.byId[userId].hospexDocuments.push(documentId)
       })
   },
 })
