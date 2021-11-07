@@ -15,10 +15,20 @@ import { getHospexUri } from '../offer/offerAPI'
 import { getProtectedImage } from '../user/userAPI'
 import { Community } from './types'
 
+class HttpErrorResponse extends Error {
+  constructor(response: Response, responseBody: string) {
+    const message = `[${response.status} ${response.statusText}]\n${responseBody}`
+    super(message)
+
+    this.name = 'HttpErrorResponse'
+    Object.setPrototypeOf(this, HttpErrorResponse.prototype)
+  }
+}
+
 export const joinCommunity = async (community: Community, userId: string) => {
   // append the user into the group inbox
   // TODO this must be much more secure, so people don't just add themselves into groups.
-  fetch(community.groupId, {
+  const response = await fetch(community.groupId, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/sparql-update' },
     body: `
@@ -27,6 +37,8 @@ export const joinCommunity = async (community: Community, userId: string) => {
         }
     `,
   })
+
+  if (!response.ok) throw new HttpErrorResponse(response, await response.text())
 
   // create :me 'https://hospex.example.com/terms/0.1#memberOf' communityId.
   // in hospex document

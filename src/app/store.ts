@@ -4,6 +4,7 @@ import loginReducer from '../features/login/loginSlice'
 import userReducer from '../features/user/userSlice'
 import communityReducer from '../features/community/communitySlice'
 import onboardingReducer from '../features/onboarding/onboardingSlice'
+import notificationReducer from '../features/notification/notificationSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     user: userReducer,
     login: loginReducer,
     onboarding: onboardingReducer,
+    notification: notificationReducer,
   },
 })
 
