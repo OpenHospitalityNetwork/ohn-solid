@@ -1,0 +1,58 @@
+@prefix hospex: <http://w3id.org/hospex/ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix sioc: <http://rdfs.org/sioc/ns#> .
+
+hospex: a owl:Ontology ;
+    dcterms:title "Hospitality exchange ontology"@en ;
+    dcterms:description "The hospitality exchange ontology describes hospitality exchange"@en ;
+    vann:preferredNamespacePrefix "hospex" ;
+    vann:preferredNamespaceUri <http://w3id.org/hospex/ns#> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:creator <https://mrkvon.solidcommunity.net/profile/card#me> ;
+    ## TODO let's specify the below fields later
+    # dcterms:contributor <https://jcaesar.solidcommunity.net/profile/card#me> ;
+    # dcterms:publisher <https://jcaesar.solidcommunity.net/profile/organizations/spqr.ttl#spqr> .
+    owl:versionInfo "0.1.0" ;
+    dcterms:issued "2021-11-08" ;
+    dcterms:modified "2021-11-08" .
+
+hospex:PersonalHospexDocument a rdfs:Class ;
+    rdfs:label "Personal Hospex Document"@en ;
+    rdfs:comment "A document containing hospitality exchange data of a person"@en .
+
+hospex:Accommodation a rdfs:Class ;
+    rdfs:label "Accommodation"@en ;
+    rdfs:comment "Accommodation that is offered to travellers"@en .
+
+hospex:Community a rdfs:Class ;
+    rdfs:label "Hospitality Exchange Community"@en ;
+    rdfs:comment "A hospitality exchange community"@en ;
+    rdfs:subClassOf sioc:Community .
+
+hospex:memberOf a rdf:Property ;
+    rdfs:label "member of"@en ;
+    rdfs:comment """
+    Membership of a person in a hospitality exchange community.
+    Hospitality exchange community has user group which has members. This property loosely expresses the inverse of that relationship between community and a member of its usergroup.
+    """@en ;
+    rdfs:domain foaf:Person ;
+    rdfs:range hospex:Community .
+
+hospex:offers a rdf:Property ;
+    rdfs:label "offers"@en ;
+    rdfs:comment "Person offers accommodation"@en ;
+    rdfs:domain foaf:Person ;
+    rdfs:range hospex:Accommodation ;
+    owl:inverseOf hospex:offeredBy .
+
+hospex:offeredBy a rdf:Property ;
+    rdfs:label "offers"@en ;
+    rdfs:comment "Accommodation is offered by a person"@en ;
+    rdfs:domain hospex:Accommodation ;
+    hospex:range foaf:Person ;
+    owl:inverseOf hospex:offers .

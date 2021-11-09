@@ -14,6 +14,7 @@ import { fetch } from '@inrupt/solid-client-authn-browser'
 import { vcard, foaf } from 'rdf-namespaces'
 import { getHospexUri } from '../offer/offerAPI'
 import uniq from 'lodash/uniq'
+import HOSPEX from '../../vocabularies/HOSPEX'
 
 export const getUser = async (webId: string): Promise<User | null> => {
   const user: User = {
@@ -50,21 +51,29 @@ export const getUser = async (webId: string): Promise<User | null> => {
 
     const userThing2 = getThing(hospexDataset, webId)
     if (userThing2) {
-      user.communityIds = getUrlAll(
-        userThing2,
-        'https://hospex.example.com/terms/0.1#memberOf',
-      )
+      user.communityIds = uniq([
+        ...getUrlAll(userThing2, HOSPEX.memberOf.value),
+        // this is for backwards compatibility (deprecated)
+        ...getUrlAll(
+          userThing2,
+          'https://hospex.example.com/terms/0.1#memberOf',
+        ),
+      ])
 
-      const offerIds1 = getUrlAll(
-        userThing2,
-        'https://hospex.example.com/terms/0.1#offers',
-      )
+      const offerIds1 = uniq([
+        ...getUrlAll(userThing2, HOSPEX.offers.value),
+        // this is for backwards compatibility (deprecated)
+        ...getUrlAll(userThing2, 'https://hospex.example.com/terms/0.1#offers'),
+      ])
 
       const allThings = getThingAll(hospexDataset)
       const offerIds2 = allThings
         .map(thing => ({
           thing,
-          url: getUrl(thing, 'https://hospex.example.com/terms/0.1#offeredBy'),
+          url:
+            getUrl(thing, HOSPEX.offeredBy.value) ??
+            // this is for backwards compatibility (deprecated)
+            getUrl(thing, 'https://hospex.example.com/terms/0.1#offeredBy'),
         }))
         .filter(({ url }) => url === webId)
         .map(({ thing }) => thing.url)

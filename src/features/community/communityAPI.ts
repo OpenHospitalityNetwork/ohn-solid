@@ -14,6 +14,8 @@ import { sioc, vcard } from 'rdf-namespaces'
 import { getHospexUri } from '../offer/offerAPI'
 import { getProtectedImage } from '../user/userAPI'
 import { Community } from './types'
+import HOSPEX from '../../vocabularies/HOSPEX'
+import uniq from 'lodash/uniq'
 
 class HttpErrorResponse extends Error {
   constructor(response: Response, responseBody: string) {
@@ -40,7 +42,7 @@ export const joinCommunity = async (community: Community, userId: string) => {
 
   if (!response.ok) throw new HttpErrorResponse(response, await response.text())
 
-  // create :me 'https://hospex.example.com/terms/0.1#memberOf' communityId.
+  // create :me 'hospex:memberOf' communityId.
   // in hospex document
   const hospexUri = getHospexUri(userId)
   const dataset = await getSolidDataset(hospexUri, { fetch })
@@ -50,7 +52,7 @@ export const joinCommunity = async (community: Community, userId: string) => {
   const newOrUpdatedHospexUser = buildThing(
     hospexUser ?? createThing({ url: userId }),
   )
-    .addUrl('https://hospex.example.com/terms/0.1#memberOf', community.id)
+    .addUrl(HOSPEX.memberOf.value, community.id)
     .build()
 
   await saveSolidDatasetAt(
@@ -70,10 +72,11 @@ export const getCommunitiesOfUser = async (
   const user = getThing(dataset, webId)
   if (!user) return []
 
-  const communities = getUrlAll(
-    user,
-    'https://hospex.example.com/terms/0.1#memberOf',
-  )
+  const communities = uniq([
+    ...getUrlAll(user, HOSPEX.memberOf.value),
+    // this is for backwards compatibility (deprecated)
+    ...getUrlAll(user, 'https://hospex.example.com/terms/0.1#memberOf'),
+  ])
 
   return communities
 }
