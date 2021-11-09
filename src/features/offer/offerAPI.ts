@@ -22,7 +22,8 @@ import { Offer } from './types'
 import GEO from '../../vocabularies/GEO'
 
 export const getHospexUri = (webId: string) => {
-  const baseUrl = /^(https:\/\/.*)\/profile\/card#me$/g.exec(webId)?.[1]
+  const baseUrl = /^(https?:\/\/.*)\/profile\/card#me$/g.exec(webId)?.[1]
+  if (!baseUrl) throw new Error('unable to generate hospex uri from webId')
   return baseUrl + '/public/hospex.ttl'
 }
 
