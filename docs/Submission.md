@@ -190,7 +190,7 @@ The app consistently works only with Node Solid Server.
 
 ## Demonstration Video
 
-TODO
+[Demonstration video on YouTube](https://youtu.be/TZCe76OiLFs)
 
 ## Industry
 
