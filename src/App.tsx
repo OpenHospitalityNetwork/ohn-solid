@@ -58,10 +58,14 @@ function App() {
           <Route path="/communities">
             <Communities />
           </Route>
-          <Route path="/bug" component={() => {
-            window.location.href = 'https://github.com/OpenHospitalityNetwork/sleepy.bike/issues/new'
-            return null
-          }}/>
+          <Route
+            path="/bug"
+            component={() => {
+              window.location.href =
+                'https://github.com/OpenHospitalityNetwork/sleepy.bike/issues/new'
+              return null
+            }}
+          />
           <Route path="/">
             <OfferMap />
           </Route>
