@@ -2,7 +2,7 @@ import React from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { logout, selectLogin } from './login/loginSlice'
 import { Link } from 'react-router-dom'
-import { FaMap, FaUser, FaHome, FaSignOutAlt, FaUsers } from 'react-icons/fa'
+import { FaMap, FaUser, FaHome, FaSignOutAlt, FaUsers, FaBug } from 'react-icons/fa'
 import { IconType } from 'react-icons'
 
 type LinkConfig = {
@@ -33,6 +33,7 @@ const Control = () => {
     },
     { type: 'link', to: '/offers', title: 'my offers', icon: FaHome },
     { type: 'link', to: '/communities', title: 'communities', icon: FaUsers },
+    { type: 'link', to: '/bug', title: 'report a bug', icon: FaBug },
     {
       type: 'button',
       onClick: () => dispatch(logout()),
