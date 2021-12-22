@@ -37,6 +37,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
+    "debug": "node --experimental-specifier-resolution=node --loader ts-node/esm --inspect-brk",
     "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md,css}\"",
     "lint": "eslint . --ext .ts"
