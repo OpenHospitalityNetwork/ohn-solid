@@ -2,6 +2,8 @@
 
 [Hospitality exchange](https://openhospitality.network) built on top of [Solid](https://solidproject.org)
 
+This project was started as part of [Inrupt Developer Workshop](https://workshop.inrupt.com/). [Project submission](./docs/Submission.md) has best documentation we have.
+
 ## Data Security
 
 Please be aware that this project is in alpha, unstable, in active development.
