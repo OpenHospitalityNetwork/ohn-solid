@@ -12,7 +12,6 @@ import {
 import { fetch } from '@inrupt/solid-client-authn-browser'
 import { sioc, vcard } from 'rdf-namespaces'
 import { getHospexUri } from '../offer/offerAPI'
-import { getProtectedImage } from '../user/userAPI'
 import { Community } from './types'
 import HOSPEX from '../../vocabularies/HOSPEX'
 import uniq from 'lodash/uniq'
@@ -87,7 +86,7 @@ export const getCommunity = async (id: string): Promise<Community> => {
     name: {},
     about: {},
     groupId: '',
-    image: await getProtectedImage('https://picsum.photos/400'), // TODO implement fetching photo
+    image: '', //await getProtectedImage('https://picsum.photos/400'), // TODO implement fetching photo
     memberIds: [] as string[],
   }
 
